@@ -1,83 +1,36 @@
-# CLUSTERPLOTS using hierarchical
-# methods to assess
-# Dissimilarity matrix
-d <- dist(smp0001, method = "euclidean")
+# MUST RUN Data_Prep BEFORE RUNNING THIS SECTION
 
+# PCA Plots using factoextra
+# Dissimilarity matrix for individual season or for all seasons combined
+d <- dist(smp0001, method = "euclidean")
 d1 <- dist(all_players, method = "euclidean")
 
 # Ward's method
 hcward <- hclust(d, method = "ward.D2" )
-
 hcward1 <- hclust(d1, method = "ward.D2")
 
-# Cut tree into n groups
-sub_grp2 <- cutree(hcward, k = 2)
-hcp2 <- fviz_cluster(list(data = smp1920, cluster = sub_grp2),
-                     main = "Hierarchical clustering: 2 clusters")
-sub_grp3 <- cutree(hcward, k = 3)
-hcp3 <- fviz_cluster(list(data = smp1920, cluster = sub_grp3),
-                     main = "Hierarchical clustering: 3 clusters")
-sub_grp4 <- cutree(hcward, k = 4)
-hcp4 <- fviz_cluster(list(data = smp1920, cluster = sub_grp4),
-                     main = "Hierarchical clustering: 4 clusters")
-sub_grp5 <- cutree(hcward, k = 5)
-hcp5 <- fviz_cluster(list(data = smp1920, cluster = sub_grp5),
-                     axes = c(1, 2),
-                     main = "Hierarchical clustering: 5 clusters")
-sub_grp6 <- cutree(hcward, k = 6)
-hcp6 <- fviz_cluster(list(data = smp1920, cluster = sub_grp6),
-                     main = "Hierarchical clustering: 6 clusters")
-sub_grp7 <- cutree(hcward, k = 7)
-hcp7  <- fviz_cluster(list(data = smp0001, cluster = sub_grp7),
-                      main = "Hierarchical clustering: 7 clusters")
-sub_grp8 <- cutree(hcward, k = 8)
-hcp8 <- fviz_cluster(list(data = smp1920, cluster = sub_grp8),
-                     main = "Hierarchical clustering: 8 clusters")
-sub_grp9 <- cutree(hcward, k = 9)
-hcp9<- fviz_cluster(list(data = smp0001, cluster = sub_grp9),
-                    main = "2000-01 Season Visualizing Nine Clusters Using PCA", 
-                    geom = "point") + theme(plot.title = element_text(hjust = 0.5), 
-                                            legend.title = element_blank(),
-                                            legend.position = 'none')
-
-sub_grp10 <- cutree(hcward, k = 10)
-hcp10 <- fviz_cluster(list(data = smp1920, cluster = sub_grp10),
-                      main = "Hierarchical clustering: 10 clusters")
-sub_grp11 <- cutree(hcward, k = 11)
-hcp11 <- fviz_cluster(list(data = smp1920, cluster = sub_grp11),
-                      main = "Hierarchical clustering: 11 clusters")
-sub_grp12 <- cutree(hcward, k = 12)
-hcp12 <- fviz_cluster(list(data = smp1920, cluster = sub_grp12),
-                      main = "Hierarchical clustering: 12 clusters")
-
+# Cut data into 9 groups
+sub_grp9 <- cutree(hcward, k = 9)                                       
 sub_grp_all <- cutree(hcward1, k = 9)
-hcpall <- fviz_cluster(list(data = all_players, cluster = sub_grp_all),
-                       main = "All players clustered (9)") + theme(plot.title = element_text(hjust = 0.5))
 
-grid.arrange(hcp5, hcp6, hcp7, hcp8, hcp9, hcp10, 
-             hcp11, hcp12)
-
-ggplotly(hcp9)
-
-ggplotly(hcpall)
-
-new9_smp1920 <- as.data.frame(cbind(smp1920, sub_grp9))
-
+# Append cluster assignments to our data frames
+new9_smp0001 <- as.data.frame(cbind(smp0001, sub_grp9))
 new9_all <- as.data.frame(cbind(all_players, sub_grp_all))
 
+# save new data frame as csv file
 write.csv(new9_smp0001,"C:/users/alexl/Documents/UTAH STATE/THESIS//new9_smp0001.csv")
 
-subset(new9_all, grepl("curryst01", rownames(new9_all)))
-
 ################################################################
-## cLASSIFY AS HIGH OR LOW OR NEITHER
+## MEGA-CLUSTERING INTRO
 ################################################################
-# assign()
+# Assign 'high' and 'low' scores to each cluster's variables based on quartiles
+# Initialize seasons vector
 vec <- c("0001", "0102", "0203", "0304", "0405", "0506", "0607", "0708", "0809", "0910",
          "1011", "1112", "1213", "1314", "1415", "1516", "1617", "1718", "1819", "1920")
 hm <- list()
 for (k in 1:20) {
-  
+
+  # First, let's cluster and append cluster assignments to each season and save these csv files all at once
   d <- dist(eval(parse(text = paste0("smp", vec[k]))), method = "euclidean")
   hcward <- hclust(d, method = "ward.D2" )
   
@@ -90,6 +43,7 @@ for (k in 1:20) {
   
   write.csv(new9_smp, paste0("C:/users/alexl/Documents/UTAH STATE/THESIS/new9_smp", vec[k], ".csv"))
   
+  # Now, we can create new tables and classify each cluster with 'highs' and 'lows' for their variables
   lquart <- rep(0, 21)
   hquart <- rep(0, 21)
   
@@ -116,16 +70,15 @@ for (k in 1:20) {
     }
   }
   
-  # nwtbl0001
-  
+  # save these high and low tables as csv's
   hm[[k]] <- nwtbl
   write.csv(nwtbl, paste0("C:/users/alexl/Documents/UTAH STATE/THESIS//nwtbl", vec[k], ".csv"))
 }
 
-# heatmap.2(as.matrix(hm[[2]]), col = c("blue", "yellow", "red"),
-#           Colv = NA, Rowv = NA)
-
-# Now, cluster based on 1's and -1's. 
+################################################
+# MEGA-CLUSTERING
+################################################
+# Now, cluster based on 1's and -1's (highs and lows)
 
 for (i in 1:20) {
   hm[[i]]$clst <- 1:9
@@ -140,25 +93,24 @@ d <- dist(nwclst[, 1:21], method = "euclidean")
 
 hcward <- hclust(d, method = "ward.D2" )
 sub_grp9 <- cutree(hcward, k = 9)
-hcp9 <- fviz_cluster(list(data = nwclst[, 1:21], cluster = sub_grp9),
-                     main = "Hierarchical clustering: 9 clusters")
 
-# change label location
-ggplotly(hcp9)
-
+# Append cluster assignments to our data frame and save it
 new9_clst <- as.data.frame(cbind(nwclst, sub_grp9))
 write.csv(new9_clst, "C:/users/alexl/Documents/UTAH STATE/THESIS//new9_clst.csv")
 
-# count to see how many clusters are in each major cluster
+# count to see how many clusters are in each major cluster (mega vs combined)
 new9_clst %>% count(sub_grp9)
-
 new9_all %>% count(sub_grp_all)
 
+#################################################
+# Exploring/Analyzing Mega-Clusters
+#################################################
 # Now, lets see what names appear the most in each cluster over the years
 # combine all player files
 player.files2 <- list.files(path = "C:/Users/alexl/Documents/UTAH STATE/THESIS/full_player_tables")
 
 setwd("C:/Users/alexl/Documents/UTAH STATE/THESIS/full_player_tables")
+
 #assuming tab separated values with a header    
 datalist2 <- lapply(player.files2, function(x)read.csv(x, header = TRUE))
 
@@ -167,63 +119,108 @@ full_player_tables <- data.frame(rbindlist(datalist2))
 full_player_tables$X <- substr(full_player_tables$X, 1, nchar(full_player_tables$X) - 5)
 names(full_player_tables)[23] <- "clst"
 
-# "Well-separated" clusters FOUR
-# Cluster 9
+# Now let's look at the players that appear the most frequently in each mega-cluster
+c1 <- new9_clst[new9_clst$sub_grp9 == 1, c("clst", "year")]
+c2 <- new9_clst[new9_clst$sub_grp9 == 2, c("clst", "year")]
+c3 <- new9_clst[new9_clst$sub_grp9 == 3, c("clst", "year")]
+c4 <- new9_clst[new9_clst$sub_grp9 == 4, c("clst", "year")]
+c5 <- new9_clst[new9_clst$sub_grp9 == 5, c("clst", "year")]
+c6 <- new9_clst[new9_clst$sub_grp9 == 6, c("clst", "year")]
+c7 <- new9_clst[new9_clst$sub_grp9 == 7, c("clst", "year")]
+c8 <- new9_clst[new9_clst$sub_grp9 == 8, c("clst", "year")]
 c9 <- new9_clst[new9_clst$sub_grp9 == 9, c("clst", "year")]
 
-# cluster 6
-c6 <- new9_clst[new9_clst$sub_grp9 == 6, c("clst", "year")]
-
-# cluster 3
-c3 <- new9_clst[new9_clst$sub_grp9 == 3, c("clst", "year")]
-
-# cluster 7
-c7 <- new9_clst[new9_clst$sub_grp9 == 7, c("clst", "year")]
-
-# "Overlapping" clusters FIVE
-c1 <- new9_clst[new9_clst$sub_grp9 == 1, c("clst", "year")]
-
-c2 <- new9_clst[new9_clst$sub_grp9 == 2, c("clst", "year")]
-
-c4 <- new9_clst[new9_clst$sub_grp9 == 4, c("clst", "year")]
-
-c5 <- new9_clst[new9_clst$sub_grp9 == 5, c("clst", "year")]
-
-c8 <- new9_clst[new9_clst$sub_grp9 == 8, c("clst", "year")]
-
-# now, extract from full_player_tables only where cluster =  n
-cluster9_tbl <- merge(full_player_tables, c9, by = c("clst", "year"))
-topcl9 <- cluster9_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
-
-cluster6_tbl <- merge(full_player_tables, c6, by = c("clst", "year"))
-topcl6 <- cluster6_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
-
-cluster3_tbl <- merge(full_player_tables, c3, by = c("clst", "year"))
-topcl3 <- cluster3_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
-
-cluster7_tbl <- merge(full_player_tables, c7, by = c("clst", "year"))
-topcl7 <- cluster7_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
-
+# Generate list of all players who ever appeared in each mega-cluster, and the number of apps
 cluster1_tbl <- merge(full_player_tables, c1, by = c("clst", "year"))
-topcl1 <- cluster1_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
+topcl1 <- cluster1_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
 
 cluster2_tbl <- merge(full_player_tables, c2, by = c("clst", "year"))
-topcl2 <- cluster2_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
+topcl2 <- cluster2_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
+
+cluster3_tbl <- merge(full_player_tables, c3, by = c("clst", "year"))
+topcl3 <- cluster3_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
 
 cluster4_tbl <- merge(full_player_tables, c4, by = c("clst", "year"))
-topcl4 <- cluster4_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
+topcl4 <- cluster4_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
 
 cluster5_tbl <- merge(full_player_tables, c5, by = c("clst", "year"))
-topcl5 <- cluster5_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
+topcl5 <- cluster5_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
+
+cluster6_tbl <- merge(full_player_tables, c6, by = c("clst", "year"))
+topcl6 <- cluster6_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
+
+cluster7_tbl <- merge(full_player_tables, c7, by = c("clst", "year"))
+topcl7 <- cluster7_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
 
 cluster8_tbl <- merge(full_player_tables, c8, by = c("clst", "year"))
-topcl8 <- cluster8_tbl %>% count(X) %>% arrange(desc(n)) #%>% top_n(15)
+topcl8 <- cluster8_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
 
+cluster9_tbl <- merge(full_player_tables, c9, by = c("clst", "year"))
+topcl9 <- cluster9_tbl %>% count(X) %>% arrange(desc(n)) # %>% top_n(15)
+
+# Optionally save these as csv files
 save(topcl1, file = "Player_Apps_1.csv")
+save(topcl2, file = "Player_Apps_2.csv")
+save(topcl3, file = "Player_Apps_3.csv")
+save(topcl4, file = "Player_Apps_4.csv")
+save(topcl5, file = "Player_Apps_5.csv")
+save(topcl6, file = "Player_Apps_6.csv")
+save(topcl7, file = "Player_Apps_7.csv")
+save(topcl8, file = "Player_Apps_8.csv")
+save(topcl9, file = "Player_Apps_9.csv")
+
 ################################################################
 # Percentage of a player's years in each cluster
 # First, a count of how many times a name appears
 count_yrs <- full_player_tables %>% count(X) %>%  arrange(desc(n))
+
+try1 <- merge(count_yrs, topcl1, by = "X")
+try1 <- try1[try1$n.x > 3, ]
+try1$pct <- try1$n.y / try1$n.x
+try1[order(try1$pct, try1$n.x, decreasing = TRUE)[1:20], ]
+try1 <- try1[order(try1$pct, try1$n.x, decreasing = TRUE), ]
+
+try2 <- merge(count_yrs, topcl2, by = "X")
+try2 <- try2[try2$n.x > 3, ]
+try2$pct <- try2$n.y / try2$n.x
+try2[order(try2$pct, try2$n.x, decreasing = TRUE)[1:15], ]
+try2 <- try2[order(try2$pct, try2$n.x, decreasing = TRUE), ]
+
+try3 <- merge(count_yrs, topcl3, by = "X")
+try3 <- try3[try3$n.x > 3, ]
+try3$pct <- try3$n.y / try3$n.x
+try3[order(try3$pct, try3$n.x, decreasing = TRUE)[1:20], ]
+try3 <- try3[order(try3$pct, try3$n.x, decreasing = TRUE), ]
+
+try4 <- merge(count_yrs, topcl4, by = "X")
+try4 <- try4[try4$n.x > 3, ]
+try4$pct <- try4$n.y / try4$n.x
+try4[order(try4$pct, try4$n.x, decreasing = TRUE)[1:20], ]
+try4 <- try4[order(try4$pct, try4$n.x, decreasing = TRUE), ]
+
+try5 <- merge(count_yrs, topcl5, by = "X")
+try5 <- try5[try5$n.x > 3, ]
+try5$pct <- try5$n.y / try5$n.x
+try5[order(try5$pct, try5$n.x, decreasing = TRUE)[1:20], ]
+try5 <- try5[order(try5$pct, try5$n.x, decreasing = TRUE), ]
+
+try6 <- merge(count_yrs, topcl6, by = "X")
+try6 <- try6[try6$n.x > 3, ]
+try6$pct <- try6$n.y / try6$n.x
+try6[order(try6$pct, try6$n.x, decreasing = TRUE)[1:30], ]
+try6 <- try6[order(try6$pct, try6$n.x, decreasing = TRUE), ]
+
+try7 <- merge(count_yrs, topcl7, by = "X")
+try7 <- try7[try7$n.x > 3, ]
+try7$pct <- try7$n.y / try7$n.x
+try7[order(try7$pct, try7$n.x, decreasing = TRUE)[1:20], ]
+try7 <- try7[order(try7$pct, try7$n.x, decreasing = TRUE), ]
+
+try8 <- merge(count_yrs, topcl8, by = "X")
+try8 <- try8[try8$n.x > 3, ]
+try8$pct <- try8$n.y / try8$n.x
+try8[order(try8$pct, try8$n.x, decreasing = TRUE)[1:20], ]
+try8 <- try8[order(try8$pct, try8$n.x, decreasing = TRUE), ]
 
 try9 <- merge(count_yrs, topcl9, by = "X")
 try9 <- try9[try9$n.x > 3, ]
@@ -231,111 +228,19 @@ try9$pct <- try9$n.y / try9$n.x
 try9[order(try9$pct, try9$n.x, decreasing = TRUE)[1:20], ]
 try9 <- try9[order(try9$pct, try9$n.x, decreasing = TRUE), ]
 
-try8 <- merge(count_yrs, topcl8, by = "X")
-try8 <- try8[try8$n.x > 3,]
-try8$pct <- try8$n.y / try8$n.x
-try8[order(try8$pct, try8$n.x, decreasing = TRUE)[1:20],]
-try8 <- try8[order(try8$pct, try8$n.x, decreasing = TRUE), ]
-
-
-
-try7 <- merge(count_yrs, topcl7, by = "X")
-try7 <- try7[try7$n.x > 3,]
-try7$pct <- try7$n.y / try7$n.x
-try7[order(try7$pct, try7$n.x, decreasing = TRUE)[1:20],]
-try7 <- try7[order(try7$pct, try7$n.x, decreasing = TRUE), ]
-
-try6 <- merge(count_yrs, topcl6, by = "X")
-try6 <- try6[try6$n.x > 3,]
-try6$pct <- try6$n.y / try6$n.x
-try6[order(try6$pct, try6$n.x, decreasing = TRUE)[1:30],]
-try6 <- try6[order(try6$pct, try6$n.x, decreasing = TRUE), ]
-
-try5 <- merge(count_yrs, topcl5, by = "X")
-try5 <- try5[try5$n.x > 3,]
-try5$pct <- try5$n.y / try5$n.x
-try5[order(try5$pct, try5$n.x, decreasing = TRUE)[1:20],]
-try5 <- try5[order(try5$pct, try5$n.x, decreasing = TRUE), ]
-
-try4 <- merge(count_yrs, topcl4, by = "X")
-try4 <- try4[try4$n.x > 3,]
-try4$pct <- try4$n.y / try4$n.x
-try4[order(try4$pct, try4$n.x, decreasing = TRUE)[1:20],]
-try4 <- try4[order(try4$pct, try4$n.x, decreasing = TRUE), ]
-
-try3 <- merge(count_yrs, topcl3, by = "X")
-try3 <- try3[try3$n.x > 3,]
-try3$pct <- try3$n.y / try3$n.x
-try3[order(try3$pct, try3$n.x, decreasing = TRUE)[1:20],]
-try3 <- try3[order(try3$pct, try3$n.x, decreasing = TRUE), ]
-
-try2 <- merge(count_yrs, topcl2, by = "X")
-try2 <- try2[try2$n.x > 3,]
-try2$pct <- try2$n.y / try2$n.x
-try2[order(try2$pct, try2$n.x, decreasing = TRUE)[1:15],]
-try2 <- try2[order(try2$pct, try2$n.x, decreasing = TRUE), ]
-
-try1 <- merge(count_yrs, topcl1, by = "X")
-try1 <- try1[try1$n.x > 3,]
-try1$pct <- try1$n.y / try1$n.x
-try1[order(try1$pct, try1$n.x, decreasing = TRUE)[1:20],]
-try1 <- try1[order(try1$pct, try1$n.x, decreasing = TRUE), ]
-
+# optionally, save these lists as csv files
 save(try1, file = "Player_App_Pct_1.csv")
-
-# create all of them side by side (pcp and wss plots) 
-# change alpha transparency/scale/etc.
-
-
-# vec <- c("0001", "0102", "0203", "0304", "0405", "0506", "0607", "0708", "0809", "0910",
-#          "1011", "1112", "1213", "1314", "1415", "1516", "1617", "1718", "1819", "1920")
-# 
-# for (k in 1:20) {
-#   
-#   d <- dist(eval(parse(text = paste0("smp", vec[k]))), method = "euclidean")
-#   
-#   sub_grp9 <- cutree(hcward, k = 9)
-#   hcp9 <- fviz_cluster(list(data = eval(parse(text = paste0("smp", vec[k]))), cluster = sub_grp9),
-#                        main = "Hierarchical clustering: 9 clusters")
-#   
-#   eval(parse(text = paste0("new9_smp", vec[k]))) <- as.data.frame(cbind(eval(parse(text = paste0("smp", vec[k]))), sub_grp9))
-#   
-#   write.csv(eval(parse(text = paste0("new9_smp", vec[k]))), paste0("C:/users/alexl/Documents/UTAH STATE/THESIS/new9_smp", vec[k], ".csv"))
-#   
-#   lquart <- rep(0, 21)
-#   hquart <- rep(0, 21)
-#   
-#   for (i in 1:21) {
-#     lquart[i] <- quantile(eval(parse(text = paste0("new9_smp", vec[k])))[, i], 0.25)
-#     hquart[i] <- quantile(eval(parse(text = paste0("new9_smp", vec[k])))[, i], 0.75)
-#   }
-#   
-#   eval(parse(text = paste0("nwtbl", vec[k]))) <- as.data.frame(eval(parse(text = paste0("new9_smp", vec[k]))) %>%
-#                                                                  group_by(sub_grp9) %>%
-#                                                                  summarise_all(list(mean)) %>% 
-#                                                                  select(-(sub_grp9)))
-#   
-#   # i is the column, j is the row!
-#   for (i in 1:21) {
-#     for(j in 1:9) {
-#       if (eval(parse(text = paste0("nwtbl", vec[k])))[j, i] > hquart[i]) {
-#         eval(parse(text = paste0("nwtbl", vec[k])))[j, i] <- 1 # high
-#       } else if (eval(parse(text = paste0("nwtbl", vec[k])))[j, i] < lquart[i]) {
-#         eval(parse(text = paste0("nwtbl", vec[k])))[j, i] <- -1 # low
-#       } else {
-#         eval(parse(text = paste0("nwtbl", vec[k])))[j, i] <- 0 # neither
-#       }
-#     }
-#   }
-#   
-#   # nwtbl0001
-#   
-#   heatmap.2(as.matrix(eval(parse(text = paste0("nwtbl", vec[k])))), col = c("blue", "yellow", "red"),
-#             Colv = NA, Rowv = NA)
-#   write.csv(eval(parse(text = paste0("nwtbl", vec[k]))), paste0("C:/users/alexl/Documents/UTAH STATE/THESIS//nwtbl", vec[k], ".csv"))
-# }
+save(try2, file = "Player_App_Pct_2.csv")
+save(try3, file = "Player_App_Pct_3.csv")
+save(try4, file = "Player_App_Pct_4.csv")
+save(try5, file = "Player_App_Pct_5.csv")
+save(try6, file = "Player_App_Pct_6.csv")
+save(try7, file = "Player_App_Pct_7.csv")
+save(try8, file = "Player_App_Pct_8.csv")
+save(try9, file = "Player_App_Pct_9.csv")
 
 ### Clustering on all players
+# Look at top players in each and the pct of their career spent in given cluster
 head(new9_all)
 new9_all$player <- rownames(new9_all)
 new9_all$player <- substr(new9_all$player, 1, nchar(rownames(new9_all)) - 10)
@@ -350,78 +255,78 @@ go1 <- cluster1 %>% count(player)
 go_1 <- merge(cluster1, go1, by = "player")
 go_1$pct <- go_1$n.y / go_1$n.x
 go_sort1 <- go_1[go_1$n.x > 3, ]
-go_sort1 <- go_sort1[order(go_sort1$pct, go_sort1$n.x, decreasing = TRUE),]
+go_sort1 <- go_sort1[order(go_sort1$pct, go_sort1$n.x, decreasing = TRUE), ]
 dim(go_sort1)
-unique(go_sort1[,c(1, 24:26)])[1:20,]
+unique(go_sort1[, c(1, 24:26)])[1:20, ]
 
 cluster2 <- comb[comb$sub_grp_all == 2, ]
 go2 <- cluster2 %>% count(player)
 go_2 <- merge(cluster2, go2, by = "player")
 go_2$pct <- go_2$n.y / go_2$n.x
 go_sort2 <- go_2[go_2$n.x > 3, ]
-go_sort2 <- go_sort2[order(go_sort2$pct, go_sort2$n.x, decreasing = TRUE),]
+go_sort2 <- go_sort2[order(go_sort2$pct, go_sort2$n.x, decreasing = TRUE), ]
 dim(go_sort2)
-unique(go_sort2[,c(1, 24:26)])[1:20,]
+unique(go_sort2[, c(1, 24:26)])[1:20, ]
 
 cluster3 <- comb[comb$sub_grp_all == 3, ]
 go3 <- cluster3 %>% count(player)
 go_3 <- merge(cluster3, go3, by = "player")
 go_3$pct <- go_3$n.y / go_3$n.x
 go_sort3 <- go_3[go_3$n.x > 3, ]
-go_sort3 <- go_sort3[order(go_sort3$pct, go_sort3$n.x, decreasing = TRUE),]
+go_sort3 <- go_sort3[order(go_sort3$pct, go_sort3$n.x, decreasing = TRUE), ]
 dim(go_sort3)
-unique(go_sort3[,c(1, 24:26)])[1:20,]
+unique(go_sort3[, c(1, 24:26)])[1:20, ]
 
 cluster4 <- comb[comb$sub_grp_all == 4, ]
 go4 <- cluster4 %>% count(player)
 go_4 <- merge(cluster4, go4, by = "player")
 go_4$pct <- go_4$n.y / go_4$n.x
 go_sort4 <- go_4[go_4$n.x > 3, ]
-go_sort4 <- go_sort4[order(go_sort4$pct, go_sort4$n.x, decreasing = TRUE),]
+go_sort4 <- go_sort4[order(go_sort4$pct, go_sort4$n.x, decreasing = TRUE), ]
 dim(go_sort4)
-unique(go_sort4[,c(1, 24:26)])[1:20,]
+unique(go_sort4[, c(1, 24:26)])[1:20, ]
 
 cluster5 <- comb[comb$sub_grp_all == 5, ]
 go5 <- cluster5 %>% count(player)
 go_5 <- merge(cluster5, go5, by = "player")
 go_5$pct <- go_5$n.y / go_5$n.x
 go_sort5 <- go_5[go_5$n.x > 3, ]
-go_sort5 <- go_sort5[order(go_sort5$pct, go_sort5$n.x, decreasing = TRUE),]
+go_sort5 <- go_sort5[order(go_sort5$pct, go_sort5$n.x, decreasing = TRUE), ]
 dim(go_sort5)
-unique(go_sort5[,c(1, 24:26)])[1:20,]
+unique(go_sort5[, c(1, 24:26)])[1:20, ]
 
 cluster6 <- comb[comb$sub_grp_all == 6, ]
 go6 <- cluster6 %>% count(player)
 go_6 <- merge(cluster6, go6, by = "player")
 go_6$pct <- go_6$n.y / go_6$n.x
 go_sort6 <- go_6[go_6$n.x > 3, ]
-go_sort6 <- go_sort6[order(go_sort6$pct, go_sort6$n.x, decreasing = TRUE),]
+go_sort6 <- go_sort6[order(go_sort6$pct, go_sort6$n.x, decreasing = TRUE), ]
 dim(go_sort6)
-unique(go_sort6[,c(1, 24:26)])[1:20,]
+unique(go_sort6[, c(1, 24:26)])[1:20, ]
 
 cluster7 <- comb[comb$sub_grp_all == 7, ]
 go7 <- cluster7 %>% count(player)
 go_7 <- merge(cluster7, go7, by = "player")
 go_7$pct <- go_7$n.y / go_7$n.x
 go_sort7 <- go_7[go_7$n.x > 3, ]
-go_sort7 <- go_sort7[order(go_sort7$pct, go_sort7$n.x, decreasing = TRUE),]
+go_sort7 <- go_sort7[order(go_sort7$pct, go_sort7$n.x, decreasing = TRUE), ]
 dim(go_sort7)
-unique(go_sort7[,c(1, 24:26)])[1:20,]
+unique(go_sort7[, c(1, 24:26)])[1:20, ]
 
 cluster8 <- comb[comb$sub_grp_all == 8, ]
 go8 <- cluster8 %>% count(player)
 go_8 <- merge(cluster8, go8, by = "player")
 go_8$pct <- go_8$n.y / go_8$n.x
 go_sort8 <- go_8[go_8$n.x > 3, ]
-go_sort8 <- go_sort8[order(go_sort8$pct, go_sort8$n.x, decreasing = TRUE),]
+go_sort8 <- go_sort8[order(go_sort8$pct, go_sort8$n.x, decreasing = TRUE), ]
 dim(go_sort8)
-unique(go_sort8[,c(1, 24:26)])[1:20,]
+unique(go_sort8[, c(1, 24:26)])[1:20, ]
 
 cluster9 <- comb[comb$sub_grp_all == 9, ]
 go9 <- cluster9 %>% count(player)
 go_9 <- merge(cluster9, go9, by = "player")
 go_9$pct <- go_9$n.y / go_9$n.x
 go_sort9 <- go_9[go_9$n.x > 3, ]
-go_sort9 <- go_sort9[order(go_sort9$pct, go_sort9$n.x, decreasing = TRUE),]
+go_sort9 <- go_sort9[order(go_sort9$pct, go_sort9$n.x, decreasing = TRUE), ]
 dim(go_sort9)
-unique(go_sort9[,c(1, 24:26)])[1:20,]
+unique(go_sort9[, c(1, 24:26)])[1:20, ]
