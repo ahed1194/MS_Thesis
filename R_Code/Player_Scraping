@@ -1,26 +1,24 @@
 ###### Read in Player CSV's
-# https://stackoverflow.com/questions/20535999/values-from-multiple-dataframe-columns-into-one-vector
-
+# set working directory
 setwd("C://Users/ALEX/Documents/UTAH STATE/THESIS")
 
 # Player data
 years <- 2000:2019 # a vector to paste in for each year of csv file we have
-# years <- 2000
 
 for (i in years){
-  full_table <- read.csv(paste0("full_data", i ,".csv")) # read in the table for the given year in the loop
+  full_table <- read.csv(paste0("full_data", i , ".csv")) # read in the table for the given year in the loop
   
-  playerrefs <- as.vector(as.matrix(full_table[,c("X1.1", "X2.1", "X3.1","X4.1","X5.1")]))  # create one vector with every player reference in the table for the given year     
+  playerrefs <- as.vector(as.matrix(full_table[ ,c("X1.1", "X2.1", "X3.1","X4.1","X5.1")]))  # create one vector with every player reference in the table for the given year     
   playerrefs <- unique(playerrefs) # Remove all duplicate player refs
-  # Now we have a vector of player references to loop over
   
+  # Now we have a vector of player references to loop over
   for (j in playerrefs){
     url_player <- paste0("https://www.basketball-reference.com", j) # paste in the player ref
     player <-  url_player %>%
       read_html %>%
       html_nodes(xpath = '//comment()') %>%
       html_text() %>%
-      paste(collapse='') %>%
+      paste(collapse = '') %>%
       read_html() %>% 
       html_node("#per_minute") %>% 
       html_table() # reads in the player data
