@@ -1,68 +1,34 @@
-# Plot of total within group sums of squares against the number of clusters
+### MUST RUN Cluster_Manipulation CODE FIRST TO LOAD AND PROCESS DATA!!
 
-wssplot <- function(data, nc = 15, seed = 123){
+#######################################
+# SECTION 1 -- Plot Within Sum of Squares against the number of clusters
+######################################
+wssplot <- function(data, nc = 15, seed = 123, main = "Within Sum of Squares by Cluster Number"){
   wss <- (nrow(data) -1) * sum(apply(data, 2, var))
   for (i in 2:nc){
     set.seed(seed)
     wss[i] <- sum(kmeans(data, centers = i)$withinss)}
   plot(1:nc, wss, type = "b", xlab = "Number of groups",
        ylab = "Sum of squares within a group", yaxt = "n",
-       main = "2000-2020 Within Sum of Squares by Cluster Number")}
+       main = main)}
 
-par(mfrow = c(5,4))
-png("C:/Users/alexl/Documents/UTAH STATE/THESIS/wssplot.png")
-p1 <- wssplot(smp0001, nc = 20)
-par(new = TRUE)
-p2 <- wssplot(smp0102, nc = 20)
-par(new = TRUE)
-p3 <- wssplot(smp0203, nc = 20)
-par(new = TRUE)
-p4 <- wssplot(smp0304, nc = 20)
-par(new = TRUE)
-p5 <- wssplot(smp0405, nc = 20)
-par(new = TRUE)
-p6 <- wssplot(smp0506, nc = 20)
-par(new = TRUE)
-p7 <- wssplot(smp0607, nc = 20)
-par(new = TRUE)
-p8 <- wssplot(smp0708, nc = 20)
-par(new = TRUE)
-p9 <- wssplot(smp0809, nc = 20)
-par(new = TRUE)
-p10 <- wssplot(smp0910, nc = 20)
-par(new = TRUE)
-p11 <- wssplot(smp1011, nc = 20)
-par(new = TRUE)
-p12 <- wssplot(smp1112, nc = 20)
-par(new = TRUE)
-p13 <- wssplot(smp1213, nc = 20)
-par(new = TRUE)
-p14 <- wssplot(smp1314, nc = 20)
-par(new = TRUE)
-p15 <- wssplot(smp1415, nc = 20)
-par(new = TRUE)
-p16 <- wssplot(smp1516, nc = 20)
-par(new = TRUE)
-p17 <- wssplot(smp1617, nc = 20)
-par(new = TRUE)
-p18 <- wssplot(smp1718, nc = 20)
-par(new = TRUE)
-p19 <- wssplot(smp1819, nc = 20)
-par(new = TRUE)
-p20 <- wssplot(smp1920, nc = 20)
-dev.off()
+# Plot the WSS for the 2000-2001 NBA Season
+p1 <- wssplot(smp0001, nc = 20, main = "Within Sum of Squares by Cluster Number - 2000-2001 NBA Season")
+p20 <- wssplot(smp1920, nc = 20, main = "Within Sum of Squares by Cluster Number - 2019-2020 NBA Season")
 
 #######################################
-# Best Clustering Algorithm Using AGNES coefficient
+# SECTION 2 -- Best Clustering Algorithm Using AGNES coefficient
 ######################################
 # Best clustering algorithim using agnes
-m <- c( "average", "single", "complete", "ward", "weighted")
+m        <- c( "average", "single", "complete", "ward", "weighted")
 names(m) <- c( "average", "single", "complete", "ward", "weighted")
 
-# function to compute coefficient for each nba season
+# function to compute AGNES coefficient for each nba season
+# Initialize years vector
 yrs <- c("0001", "0102", "0203", "0304", "0405", "0506", "0607", "0708", "0809", 
          "0910", "1011", "1112", "1213", "1314", "1415", "1516", "1617", "1718", 
          "1819", "1920")
+         
 li <- list()
 for (i in 1:20){
   ac <- function(x) {
@@ -73,11 +39,11 @@ for (i in 1:20){
 }
 
 # Now compute the average across the 20 years
-Av <- rep(0, 20)
-Si <- rep(0, 20)
-Co <- rep(0, 20)
-Wa <- rep(0, 20)
-We <- rep(0, 20)
+Av <- rep(0, 20) # Average
+Si <- rep(0, 20) # Single
+Co <- rep(0, 20) # Complete
+Wa <- rep(0, 20) # Ward D2
+We <- rep(0, 20) # Weighted
 for (i in 1:20){
   Av[i] <- li[[i]][1]
   Si[i] <- li[[i]][2]
@@ -88,39 +54,40 @@ for (i in 1:20){
 
 c(mean(Av), mean(Si), mean(Co), mean(Wa), mean(We))
 
-# average    single  complete      ward  weighted 
+# average    single    complete   ward     weighted 
 # 0.7932854 0.7164891 0.8631513 0.9587179 0.8183429 
-# Ward (d2) shows most compactness
+# Ward (d2) shows most compactness at 0.96 across 20 seasons
 
 ########################################################
-# NbClust Index Selections
+# SECTION 3 -- NbClust Index Selections
 ########################################################
 ################################
 # Hierarchical ward.D2 - 5-20
 ################################
 setwd("C:/Users/alexl/Documents/UTAH STATE/THESIS")
 set.seed(1234)
-nc1wd2 <- NbClust(smp0001, min.nc = 5, max.nc=20, method="ward.D2")
-nc2wd2 <- NbClust(smp0102, min.nc = 5, max.nc=20, method="ward.D2")
-nc3wd2 <- NbClust(smp0203, min.nc = 5, max.nc=20, method="ward.D2")
-nc4wd2 <- NbClust(smp0304, min.nc = 5, max.nc=20, method="ward.D2")
-nc5wd2 <- NbClust(smp0405, min.nc = 5, max.nc=20, method="ward.D2")
-nc6wd2 <- NbClust(smp0506, min.nc = 5, max.nc=20, method="ward.D2")
-nc7wd2 <- NbClust(smp0607, min.nc = 5, max.nc=20, method="ward.D2")
-nc8wd2 <- NbClust(smp0708, min.nc = 5, max.nc=20, method="ward.D2")
-nc9wd2 <- NbClust(smp0809, min.nc = 5, max.nc=20, method="ward.D2")
-nc10wd2 <- NbClust(smp0910, min.nc = 5, max.nc=20, method="ward.D2")
-nc11wd2 <- NbClust(smp1011, min.nc = 5, max.nc=20, method="ward.D2")
-nc12wd2 <- NbClust(smp1112, min.nc = 5, max.nc=20, method="ward.D2")
-nc13wd2 <- NbClust(smp1213, min.nc = 5, max.nc=20, method="ward.D2")
-nc14wd2 <- NbClust(smp1314, min.nc = 5, max.nc=20, method="ward.D2")
-nc15wd2 <- NbClust(smp1415, min.nc = 5, max.nc=20, method="ward.D2")
-nc16wd2 <- NbClust(smp1516, min.nc = 5, max.nc=20, method="ward.D2")
-nc17wd2 <- NbClust(smp1617, min.nc = 5, max.nc=20, method="ward.D2")
-nc18wd2 <- NbClust(smp1718, min.nc = 5, max.nc=20, method="ward.D2")
-nc19wd2 <- NbClust(smp1819, min.nc = 5, max.nc=20, method="ward.D2")
-nc20wd2 <- NbClust(smp1920, min.nc = 5, max.nc=20, method="ward.D2")
+nc1wd2 <- NbClust(smp0001, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc2wd2 <- NbClust(smp0102, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc3wd2 <- NbClust(smp0203, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc4wd2 <- NbClust(smp0304, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc5wd2 <- NbClust(smp0405, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc6wd2 <- NbClust(smp0506, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc7wd2 <- NbClust(smp0607, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc8wd2 <- NbClust(smp0708, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc9wd2 <- NbClust(smp0809, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc10wd2 <- NbClust(smp0910, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc11wd2 <- NbClust(smp1011, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc12wd2 <- NbClust(smp1112, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc13wd2 <- NbClust(smp1213, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc14wd2 <- NbClust(smp1314, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc15wd2 <- NbClust(smp1415, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc16wd2 <- NbClust(smp1516, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc17wd2 <- NbClust(smp1617, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc18wd2 <- NbClust(smp1718, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc19wd2 <- NbClust(smp1819, min.nc = 5, max.nc = 20, method = "ward.D2")
+nc20wd2 <- NbClust(smp1920, min.nc = 5, max.nc = 20, method = "ward.D2")
 
+# Save results since they take a while to run
 save(nc1wd2, file = "res1.Rdata")
 save(nc2wd2, file = "res2.Rdata")
 save(nc3wd2, file = "res3.Rdata")
@@ -141,104 +108,16 @@ save(nc17wd2, file = "res17.Rdata")
 save(nc18wd2, file = "res18.Rdata")
 save(nc19wd2, file = "res19.Rdata")
 save(nc20wd2, file = "res20.Rdata")
-
-# save(nc1wd2, file = "res1240.Rdata")
-# save(nc2wd2, file = "res2240.Rdata")
-# save(nc3wd2, file = "res3240.Rdata")
-# save(nc4wd2, file = "res4240.Rdata")
-# save(nc5wd2, file = "res5240.Rdata")
-# save(nc6wd2, file = "res6240.Rdata")
-# save(nc7wd2, file = "res7240.Rdata")
-# save(nc8wd2, file = "res8240.Rdata")
-# save(nc9wd2, file = "res9240.Rdata")
-# save(nc10wd2, file = "res10240.Rdata")
-# save(nc11wd2, file = "res11240.Rdata")
-# save(nc12wd2, file = "res12240.Rdata")
-# save(nc13wd2, file = "res13240.Rdata")
-# save(nc14wd2, file = "res14240.Rdata")
-# save(nc15wd2, file = "res15240.Rdata")
-# save(nc16wd2, file = "res16240.Rdata")
-# save(nc17wd2, file = "res17240.Rdata")
-# save(nc18wd2, file = "res18240.Rdata")
-# save(nc19wd2, file = "res19240.Rdata")
-# save(nc20wd2, file = "res20240.Rdata")
-# 
-# save(nc1wd2, file = "res148.Rdata")
-# save(nc2wd2, file = "res248.Rdata")
-# save(nc3wd2, file = "res348.Rdata")
-# save(nc4wd2, file = "res448.Rdata")
-# save(nc5wd2, file = "res548.Rdata")
-# save(nc6wd2, file = "res648.Rdata")
-# save(nc7wd2, file = "res748.Rdata")
-# save(nc8wd2, file = "res848.Rdata")
-# save(nc9wd2, file = "res948.Rdata")
-# save(nc10wd2, file = "res1048.Rdata")
-# save(nc11wd2, file = "res1148.Rdata")
-# save(nc12wd2, file = "res1248.Rdata")
-# save(nc13wd2, file = "res1348.Rdata")
-# save(nc14wd2, file = "res1448.Rdata")
-# save(nc15wd2, file = "res1548.Rdata")
-# save(nc16wd2, file = "res1648.Rdata")
-# save(nc17wd2, file = "res1748.Rdata")
-# save(nc18wd2, file = "res1848.Rdata")
-# save(nc19wd2, file = "res1948.Rdata")
-# save(nc20wd2, file = "res2048.Rdata")
-
-set.seed(1234)
-nc1wd2 <- NbClust(smp0001, min.nc = 2, max.nc=20, method="ward.D2")
-nc2wd2 <- NbClust(smp0102, min.nc = 2, max.nc=20, method="ward.D2")
-nc3wd2 <- NbClust(smp0203, min.nc = 2, max.nc=20, method="ward.D2")
-nc4wd2 <- NbClust(smp0304, min.nc = 2, max.nc=20, method="ward.D2")
-nc5wd2 <- NbClust(smp0405, min.nc = 2, max.nc=20, method="ward.D2")
-nc6wd2 <- NbClust(smp0506, min.nc = 2, max.nc=20, method="ward.D2")
-nc7wd2 <- NbClust(smp0607, min.nc = 2, max.nc=20, method="ward.D2")
-nc8wd2 <- NbClust(smp0708, min.nc = 2, max.nc=20, method="ward.D2")
-nc9wd2 <- NbClust(smp0809, min.nc = 2, max.nc=20, method="ward.D2")
-nc10wd2 <- NbClust(smp0910, min.nc = 2, max.nc=20, method="ward.D2")
-nc11wd2 <- NbClust(smp1011, min.nc = 2, max.nc=20, method="ward.D2")
-nc12wd2 <- NbClust(smp1112, min.nc = 2, max.nc=20, method="ward.D2")
-nc13wd2 <- NbClust(smp1213, min.nc = 2, max.nc=20, method="ward.D2")
-nc14wd2 <- NbClust(smp1314, min.nc = 2, max.nc=20, method="ward.D2")
-nc15wd2 <- NbClust(smp1415, min.nc = 2, max.nc=20, method="ward.D2")
-nc16wd2 <- NbClust(smp1516, min.nc = 2, max.nc=20, method="ward.D2")
-nc17wd2 <- NbClust(smp1617, min.nc = 2, max.nc=20, method="ward.D2")
-nc18wd2 <- NbClust(smp1718, min.nc = 2, max.nc=20, method="ward.D2")
-nc19wd2 <- NbClust(smp1819, min.nc = 2, max.nc=20, method="ward.D2")
-nc20wd2 <- NbClust(smp1920, min.nc = 2, max.nc=20, method="ward.D2")
-
-save(nc1wd2, file = "res1.Rdata")
-save(nc2wd2, file = "res2.Rdata")
-save(nc3wd2, file = "res3.Rdata")
-save(nc4wd2, file = "res4.Rdata")
-save(nc5wd2, file = "res5.Rdata")
-save(nc6wd2, file = "res6.Rdata")
-save(nc7wd2, file = "res7.Rdata")
-save(nc8wd2, file = "res8.Rdata")
-save(nc9wd2, file = "res9.Rdata")
-save(nc10wd2, file = "res10.Rdata")
-save(nc11wd2, file = "res11.Rdata")
-save(nc12wd2, file = "res12.Rdata")
-save(nc13wd2, file = "res13.Rdata")
-save(nc14wd2, file = "res14.Rdata")
-save(nc15wd2, file = "res15.Rdata")
-save(nc16wd2, file = "res16.Rdata")
-save(nc17wd2, file = "res17.Rdata")
-save(nc18wd2, file = "res18.Rdata")
-save(nc19wd2, file = "res19.Rdata")
-save(nc20wd2, file = "res20.Rdata")
-
-
 
 # reload results
 setwd("C:/Users/alexl/Documents/UTAH STATE/THESIS")
 for (i in 1:20){
-  load(paste0("res", i,".Rdata"))
+  load(paste0("res", i, ".Rdata"))
 }
-
 
 x <- list()
 for (i in 1:20){
-  x[[i]] <- get(paste0("nc", i, "wd2"))$Best.n[1,]
+  x[[i]] <- get(paste0("nc", i, "wd2"))$Best.n[1 ,]
   print(x)
 }
 
@@ -246,47 +125,45 @@ ind <- rep(0, 20)
 for (i in 1:20){
   ind[i] <- x[[i]][5]
 }
-ind
 
-names(x[[1]])
-
-my_indices <- data.frame(matrix(rep(0,26*20), 20,26))
+my_indices <- data.frame(matrix(rep(0, 26 * 20), 20, 26))
 names(my_indices) <- names(x[[1]])
 
 for (i in 1:26){
   for (j in 1:20){
-    my_indices[j,i] <- x[[j]][i]
+    my_indices[j, i] <- x[[j]][i]
   }
 }
 
+# Save index selections as csv 
 write.csv(my_indices, file = "my_indices.csv")
 
-my_indices[my_indices<5] <- NA
+# convert selections that were not meaningful to NA
+my_indices[my_indices < 5] <- NA
 
-pdf("C:/Users/alexl/Documents/UTAH STATE/THESIS/my_indices.pdf")
-par(mfrow = c(5,4), oma = c(4,6,4,6),
+# Create histogram matrix showing 20 seasons and their optimal cluster selections
+# pdf("C:/Users/alexl/Documents/UTAH STATE/THESIS/my_indices.pdf")
+par(mfrow = c(5, 4), oma = c(4, 6, 4, 6),
     mar = c(1.5, 1.5, 1.5, 1.5))
 for (i in 1:20){
-  barplot(table(factor(as.numeric(my_indices[i,]), levels = 5:20)),
+  barplot(table(factor(as.numeric(my_indices[i, ]), levels = 5:20)),
        main = NULL,
        cex.main = 0.75,
        cex.axis = 0.75,
        xlab = NULL,
        ylab = NULL,
        xaxt = 'n',
-       ylim = c(0,10),
+       ylim = c(0, 10),
        space = 0)
-  title(paste0(2000+i-1, "-", 2000+i), line = 0, cex.main = 0.75)
-  axis(side = 1, at = c(0.5,5.5,10.5,15.5), labels = c(5,10,15,20))
+  title(paste0(2000 + i - 1, "-", 2000 + i), line = 0, cex.main = 0.75)
+  axis(side = 1, at = c(0.5, 5.5, 10.5, 15.5), labels = c(5, 10, 15, 20))
 }
-# mtext("Optimal Number of Clusters by Year", side = 3, line = 0, outer = TRUE, cex = 1)
-
+mtext("Optimal Number of Clusters by Year", side = 3, line = 0, outer = TRUE, cex = 1)
 mtext("Frequency", side = 2, line = 1, outer = TRUE, cex = 0.85)
-mtext("# of Clusters",outer = TRUE, side = 1, line = 1, cex = 0.85)
-dev.off()
+mtext("# of Clusters", outer = TRUE, side = 1, line = 1, cex = 0.85)
+# dev.off()
 
-table(factor(my_indices[,1],levels = 5:20)) + table(factor((my_indices[,2]), levels = 5:20))
-
+# Now we can create vectors for each season selections from 5 to 20
 t1wd2 <- table(factor(my_indices[,1], levels = 5:20))
 t2wd2 <- table(factor(my_indices[,2], levels = 5:20))
 t3wd2 <- table(factor(my_indices[,3], levels = 5:20))
@@ -308,59 +185,58 @@ t18wd2 <- table(factor(my_indices[,18], levels = 5:20))
 t19wd2 <- table(factor(my_indices[,19], levels = 5:20))
 t20wd2 <- table(factor(my_indices[,20], levels = 5:20))
 
+# Combine these selections to get the consensus 'votes'
 ttotalwd2 <- t1wd2 + t2wd2+ t3wd2 + t4wd2 + t5wd2 + t6wd2 + t7wd2 + 0 + t9wd2 + t10wd2 +
   t11wd2 + t12wd2 + t13wd2 + t14wd2 + t15wd2 + t16wd2 + t17wd2 + t18wd2 + t19wd2 + t20wd2
-dev.off()
+
+# Now we can plot the combined selection
 plt5_20 <- barplot(ttotalwd2, 
         xlab = "Number of clusters chosen", ylab = "frequency",
-        # main = "Ideal Number of clusters 2000-01 to 2019-20 (ward.D2)",
         main = "Optimal number of clusters for NBA player data using Ward D2 (2000-2001 to 2019-2020)",
         yaxt = 'n',
         xaxt = 'n',
-        ylim = c(0,95),
+        ylim = c(0, 95),
         space = 0,
         cex.axis = 1.5,
         cex.main = 1.5,
         cex.lab = 1.5)
 axis(side = 1, at = seq(0.5, 15.5, by = 1), labels = 5:20, cex.axis = 1.5)
-axis(side = 2, at = seq(0,90, by=10), labels = seq(0,90, by=10), cex.axis = 1.5)
+axis(side = 2, at = seq(0, 90, by = 10), labels = seq(0, 90, by = 10), cex.axis = 1.5)
 
 ###################################################
-# Adjusted Rand Index
+# SECTION 4 -- Adjusted Rand Index
 ###################################################
-# Run lines 1-108 from clustering.R
-
-# ADJ RAND INDEX
 library(mclust)
 
 ## Example comparing the 2017-18 season to the 2018-19 season
 
-d <- dist(smp1920, method = "euclidean")
+d <- dist(smp1718, method = "euclidean")
 hcward <- hclust(d, method = "ward.D2" )
-sub_grp9_1920 <- cutree(hcward, k = 9)
+sub_grp9_1718 <- cutree(hcward, k = 9)
 
-names(sub_grp9_1920) <- substr(names(sub_grp9_1920), 1, nchar(names(sub_grp9_1920)) - 7)
+names(sub_grp9_1718) <- substr(names(sub_grp9_1718), 1, nchar(names(sub_grp9_1718)) - 7)
 
-d <- dist(smp0506, method = "euclidean")
+d <- dist(smp1819, method = "euclidean")
 hcward <- hclust(d, method = "ward.D2" )
-sub_grp9_0506 <- cutree(hcward, k = 9)
+sub_grp9_1819 <- cutree(hcward, k = 9)
 
-names(sub_grp9_0506) <- substr(names(sub_grp9_0506), 1, nchar(names(sub_grp9_0506)) - 7)
+names(sub_grp9_1819) <- substr(names(sub_grp9_1819), 1, nchar(names(sub_grp9_1819)) - 7)
 
-# Now we need to keep only the matches:
-test <- data.frame(na.omit(cbind(sub_grp9_1516, sub_grp9_1617 = sub_grp9_1617[names(sub_grp9_1516)])))
+# Now we need to keep only the matches: (they have to have played in both seasons)
+test <- data.frame(na.omit(cbind(sub_grp9_1718, sub_grp9_1819 = sub_grp9_1819[names(sub_grp9_1718)])))
 
-adjustedRandIndex(test[,1], test[,2])
+# Calculate the ARI
+adjustedRandIndex(test[, 1], test[, 2])
 
-### Now compare to a random sample
+### Now compare this result to a random baseline (sample same amount of players into each cluster as actual clustering)
 r1 <- rep(0, 9)
 for (i in 1:9){
-  r1[i] <- length(test$sub_grp9_1516[test$sub_grp9_1516 == i])
+  r1[i] <- length(test$sub_grp9_1718[test$sub_grp9_1718 == i])
 }
 
 r2 <- rep(0, 9)
 for (i in 1:9){
-  r2[i] <- length(test$sub_grp9_1617[test$sub_grp9_1617 == i])
+  r2[i] <- length(test$sub_grp9_1819[test$sub_grp9_1819 == i])
 }
 
 # Sample from players
@@ -371,6 +247,7 @@ nums1 <- c(rep(1, r1[1]), rep(2, r1[2]), rep(3, r1[3]), rep(4, r1[4]),
 nums2 <- c(rep(1, r2[1]), rep(2, r2[2]), rep(3, r2[3]), rep(4, r2[4]), 
            rep(5, r2[5]), rep(6, r2[6]), rep(7, r2[7]), rep(8, r2[8]), 
            rep(9, r2[9]))
+           
 # Simulate ARI 9999 times
 out <- rep(0, 9999)
 for (i in 1:9999){
@@ -380,7 +257,7 @@ for (i in 1:9999){
   test$sam2 <- sam2
   
   # Now run the ARI again with the random assignments
-  out[i] <- adjustedRandIndex(test[,3], test[,4])
+  out[i] <- adjustedRandIndex(test[, 3], test[, 4])
 }
 
 # Now let's look at the histogram
@@ -396,16 +273,17 @@ hist(out,
 axis(side = 1, at = c(-0.05, -0.025, 0, 0.025, 0.05), labels = c(-0.05, -0.025, 0, 0.025, 0.05), cex.axis = 0.5, padj = -2)
 axis(side = 2, at = seq(0,4000, by = 1000), labels = c(0,1000,2000,3000,4000), padj = 1)
 
+# We can also look at the histogram compared to the actual ARI we got
 hist(out, 
      # main = "Adjusted Rand Index Calculation From 9999 Samples of Players From 2017-18 to 2018-19",
      main = "",
      xlab = "ARI",
      ylim = c(0, 2000),
      xlim = c(-0.1, 0.4))
-
 abline(v = .2848, lwd = 3, col = "red", lty = 2)
 
-# GET ARI FROM ALL YEARS
+
+# NOW WE CAN GET THE ARI SCORES AND THE SIMULATIONS FOR ALL YEARS
 yrs <- c("0001", "0102", "0203", "0304", "0405", "0506", "0607", "0708", "0809", 
          "0910", "1011", "1112", "1213", "1314", "1415", "1516", "1617", "1718", 
          "1819", "1920")
@@ -416,20 +294,25 @@ for (i in 1:19){
   sub1 <- cutree(hcward, k = 9)
   names(sub1) <- substr(names(sub1), 1, nchar(names(sub1)) - 7)
   
-  d <- dist(get(paste0("smp", yrs[i+1])), method = "euclidean")
+  d <- dist(get(paste0("smp", yrs[i + 1])), method = "euclidean")
   hcward <- hclust(d, method = "ward.D2" )
   sub2 <- cutree(hcward, k = 9)
   names(sub2) <- substr(names(sub2), 1, nchar(names(sub2)) - 7)
   
   test <- data.frame(na.omit(cbind(sub1, sub2 = sub2[names(sub1)])))
-  ari[i] <- adjustedRandIndex(test[,1], test[,2])
+  ari[i] <- adjustedRandIndex(test[, 1], test[, 2])
 }
+
+# Look at our vector of ARI's for the 20 seasons
 ari
+
+# Now we can make a dataframe for these results
 nmyr <- c("01/02", "02/03", "03/04", "04/05", "05/06", "06/07", "07/08", "08/09", "09/10", 
           "10/11", "11/12", "12/13", "13/14", "14/15", "15/16", "16/17", "17/18", "18/19", "19/20")
 
 ari_df <- data.frame(cbind(nmyr, ari))
 ari_df$ari <- as.numeric(ari_df$ari)
+
 # scatterplot of ARI results
 plot(ari_df$ari, main = "Adjusted Rand Index from Year to Year on Nine Clusters",
      xlab = "Year Comparison",
@@ -440,20 +323,29 @@ plot(ari_df$ari, main = "Adjusted Rand Index from Year to Year on Nine Clusters"
 
 axis(1, 1:19, nmyr[1:19])
 
-
-#############################################################3333
-### Now compare to a random sample
+### Now compare all years to random baselines for those years
 yrs <- c("0001", "0102", "0203", "0304", "0405", "0506", "0607", "0708", "0809", 
          "0910", "1011", "1112", "1213", "1314", "1415", "1516", "1617", "1718", 
          "1819", "1920")
+
+# Create vectors for cluster assignments by season
+assignments <- list()
+for (i in 1:20){
+  d <- dist(get(paste0("smp", yrs[i])), method = "euclidean")
+  hcward <- hclust(d, method = "ward.D2" )
+  assignments[[i]] <- cutree(hcward, k = 9)
+  
+  names(assignments[[i]]) <- substr(names(assignments[[i]]), 1, nchar(names(assignments[[i]])) - 7)
+}
+         
 df1 <- data.frame()
 df2 <- data.frame()
 pdf("C:/Users/alexl/Documents/UTAH STATE/THESIS/ari_sim.pdf")
-par(mfrow = c(5,4), oma = c(4,6,4,6),
+par(mfrow = c(5, 4), oma = c(4, 6, 4, 6),
     mar = c(1.5, 1.5, 1.5, 1.5))
 for (i in 1:19){
-  df1 <- get(paste0("sub_grp9_",yrs[i]))
-  df2 <- get(paste0("sub_grp9_",yrs[i+1]))
+  df1 <- assignments[[i]]
+  df2 <- assignments[[i + 1]]
   test <- data.frame(na.omit(cbind(df1, df2 = df2[names(df1)])))
   colnames(test) <- c('col1','col2')
   r1 <- rep(0, 9)
@@ -477,10 +369,10 @@ for (i in 1:19){
     test$sam1 <- sam1
     sam2 <- sample(nums2, replace = FALSE)
     test$sam2 <- sam2
-    out[l] <- adjustedRandIndex(test[,3], test[,4])
+    out[l] <- adjustedRandIndex(test[, 3], test[, 4])
   }
   hist(out, 
-       main = paste0(2000+i-1,"-",2000+i, " to ", 2000+i, "-", 2000+i+1),
+       main = paste0(2000 + i - 1, "-", 2000 + i, " to ", 2000 + i, "-", 2000 + i + 1),
        xlab = "ARI",
        xaxt = 'n',
        yaxt = 'n',
@@ -492,18 +384,4 @@ for (i in 1:19){
   axis(side = 2, at = seq(0, 4000, by = 1000), labels = c(0, 1000, 2000, 3000, 4000), cex.axis = 0.5, padj = 2)
 }
 mtext("Frequency", side = 2, line = 1, outer = TRUE, cex = 0.85)
-mtext("ARI",outer = TRUE, side = 1, line = 1, cex = 0.85)
-dev.off()
-  
-  # Now run the ARI again with the random assignments
-
-
-
-
-
-# basic example
-set.seed(5)
-a <- sample(1:3, 5, replace = TRUE)
-a
-b <- sample(1:3, 5, replace = TRUE)
-b
+mtext("ARI", outer = TRUE, side = 1, line = 1, cex = 0.85)
