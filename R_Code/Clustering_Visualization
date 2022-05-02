@@ -1,0 +1,229 @@
+# Dendograms
+
+# PCA
+
+d <- dist(smp0001, method = "euclidean")
+
+d1 <- dist(all_players, method = "euclidean")
+
+# Ward's method
+hcward <- hclust(d, method = "ward.D2" )
+
+hcward1 <- hclust(d1, method = "ward.D2")
+
+# Cut tree into n groups
+sub_grp2 <- cutree(hcward, k = 2)
+hcp2 <- fviz_cluster(list(data = smp1920, cluster = sub_grp2),
+                     main = "Hierarchical clustering: 2 clusters")
+sub_grp3 <- cutree(hcward, k = 3)
+hcp3 <- fviz_cluster(list(data = smp1920, cluster = sub_grp3),
+                     main = "Hierarchical clustering: 3 clusters")
+sub_grp4 <- cutree(hcward, k = 4)
+hcp4 <- fviz_cluster(list(data = smp1920, cluster = sub_grp4),
+                     main = "Hierarchical clustering: 4 clusters")
+sub_grp5 <- cutree(hcward, k = 5)
+hcp5 <- fviz_cluster(list(data = smp1920, cluster = sub_grp5),
+                     axes = c(1, 2),
+                     main = "Hierarchical clustering: 5 clusters")
+sub_grp6 <- cutree(hcward, k = 6)
+hcp6 <- fviz_cluster(list(data = smp1920, cluster = sub_grp6),
+                     main = "Hierarchical clustering: 6 clusters")
+sub_grp7 <- cutree(hcward, k = 7)
+hcp7  <- fviz_cluster(list(data = smp0001, cluster = sub_grp7),
+                      main = "Hierarchical clustering: 7 clusters")
+sub_grp8 <- cutree(hcward, k = 8)
+hcp8 <- fviz_cluster(list(data = smp1920, cluster = sub_grp8),
+                     main = "Hierarchical clustering: 8 clusters")
+sub_grp9 <- cutree(hcward, k = 9)
+hcp9<- fviz_cluster(list(data = smp0001, cluster = sub_grp9),
+                    main = "2000-01 Season Visualizing Nine Clusters Using PCA", 
+                    geom = "point") + theme(plot.title = element_text(hjust = 0.5), 
+                                            legend.title = element_blank(),
+                                            legend.position = 'none')
+
+sub_grp10 <- cutree(hcward, k = 10)
+hcp10 <- fviz_cluster(list(data = smp1920, cluster = sub_grp10),
+                      main = "Hierarchical clustering: 10 clusters")
+sub_grp11 <- cutree(hcward, k = 11)
+hcp11 <- fviz_cluster(list(data = smp1920, cluster = sub_grp11),
+                      main = "Hierarchical clustering: 11 clusters")
+sub_grp12 <- cutree(hcward, k = 12)
+hcp12 <- fviz_cluster(list(data = smp1920, cluster = sub_grp12),
+                      main = "Hierarchical clustering: 12 clusters")
+
+sub_grp_all <- cutree(hcward1, k = 9)
+hcpall <- fviz_cluster(list(data = all_players, cluster = sub_grp_all),
+                       main = "All players clustered (9)") + theme(plot.title = element_text(hjust = 0.5))
+
+grid.arrange(hcp5, hcp6, hcp7, hcp8, hcp9, hcp10, 
+             hcp11, hcp12)
+
+ggplotly(hcp9)
+
+ggplotly(hcpall)
+
+###############
+# TSNE
+###############
+library(Rtsne)
+
+######
+setwd("C://Users/alexl/Documents/UTAH STATE/THESIS")
+yrs <- c("0001", "0102", "0203", "0304", "0405", "0506", "0607", "0708", "0809", 
+         "0910", "1011", "1112", "1213", "1314", "1415", "1516", "1617", "1718", 
+         "1819", "1920")
+
+# single tsne plot
+d <- dist(smp0001, method = "euclidean")
+hcward <- hclust(d, method = "ward.D2" )
+sub_grp9 <- cutree(hcward, k = 9)
+
+smp_mat <- as.matrix(smp0001)
+my_ls <- list(data = smp_mat, cluster = sub_grp9)
+set.seed(123)
+tsne_out <- Rtsne(my_ls$data, pca = FALSE, perplexity = 30, theta = 0.0)
+
+colors <- rainbow(length(unique(my_ls$cluster)))
+shapes <- 15:23
+names(colors) <- unique(my_ls$cluster)
+plot(tsne_out$Y, col = colors[my_ls$cluster], lty = 2,
+     main = "tSNE", 
+     xlab = "tSNE Dimension 1", 
+     ylab = "tSNE Dimension 2")
+text(tsne_out$Y, labels=my_ls$cluster, col=colors[my_ls$cluster], cex = 2)
+
+# save all plots individually
+for (i in 1:20){
+        d <- dist(get(paste0("smp", yrs[i])), method = "euclidean")
+        hcward <- hclust(d, method = "ward.D2")
+        sub_grp9 <- cutree(hcward, k = 9)
+        
+        smp_mat <- as.matrix(get(paste0("smp", yrs[i])))
+        my_ls <- list(data = smp_mat, cluster = sub_grp9)
+        set.seed(123)
+        tsne_out <- Rtsne(my_ls$data, pca = FALSE, perplexity = 30, theta = 0.0)
+        
+        colors <- rainbow(length(unique(my_ls$cluster)))
+        shapes <- 15:23
+        names(colors) <- unique(my_ls$cluster)
+        png(filename = paste0("tsne", yrs[i], ".png"))
+        plot(tsne_out$Y, col = colors[my_ls$cluster], lty = 2,
+             main = paste0("tSNE", " ", 2000 + i - 1, "-", 2000 + i), 
+             xlab = "tSNE Dimension 1", 
+             ylab = "tSNE Dimension 2")
+        text(tsne_out$Y, labels=my_ls$cluster, col=colors[my_ls$cluster], cex = 2)
+        dev.off()
+}
+
+# combined pdf 
+pdf("combined_tsne.pdf", 8,10)
+par(mfrow=c(5,4), oma = c(4,4,4,4), mai = c(0.1, 0.1, 0.2, 0.1))
+for (i in 1:20){
+        d <- dist(get(paste0("smp", yrs[i])), method = "euclidean")
+        hcward <- hclust(d, method = "ward.D2")
+        sub_grp9 <- cutree(hcward, k = 9)
+        
+        smp_mat <- as.matrix(get(paste0("smp", yrs[i])))
+        my_ls <- list(data = smp_mat, cluster = sub_grp9)
+        set.seed(123)
+        tsne_out <- Rtsne(my_ls$data, pca = FALSE, perplexity = 30, theta = 0.0)
+        
+        colors <- rainbow(length(unique(my_ls$cluster)))
+        shapes <- 15:23
+        names(colors) <- unique(my_ls$cluster)
+        plot(tsne_out$Y, col = colors[my_ls$cluster], 
+             main = paste0("tsne", " ", 2000 + i - 1, "-", 2000+i), 
+             xlab = "", ylab = "", 
+             xaxt = "n", yaxt = "n", cex = 0.1,
+             "cex.main" = 1)
+        text(tsne_out$Y, labels = my_ls$cluster,
+             col = colors[my_ls$cluster], cex = 1)
+        # mtext("Clustering NBA player data using tSNE", side = 3, line = 0, outer = TRUE, cex = 1)
+        mtext("Comp1", side = 2, line = 1, outer = TRUE, cex = 0.85)
+        mtext("Comp2",outer = TRUE, side = 1, line = 1, cex = 0.85)
+}
+dev.off()
+
+###############
+# pca
+###############
+# single pca plot
+d <- dist(smp1920, method = "euclidean")
+hcward <- hclust(d, method = "ward.D2" )
+sub_grp9 <- cutree(hcward, k = 9)
+
+smp_mat <- as.matrix(smp1920)
+my_ls <- list(data = smp_mat, cluster = sub_grp9)
+
+pca <- princomp(my_ls$data)$scores[,1:2]
+plot(pca, col = colors[my_ls$cluster], main="pca 2000-2001", "cex.main"=1.5, "cex.lab"=1.5)
+text(pca, labels=my_ls$cluster,col=colors[my_ls$cluster], cex = 2)
+
+# save pca plots individually
+for (i in 1:20){
+        d <- dist(get(paste0("smp", yrs[i])), method = "euclidean")
+        hcward <- hclust(d, method = "ward.D2")
+        sub_grp9 <- cutree(hcward, k = 9)
+        
+        smp_mat <- as.matrix(get(paste0("smp", yrs[i])))
+        my_ls <- list(data = smp_mat, cluster = sub_grp9)
+        pca <- princomp(my_ls$data)$scores[,1:2]
+        
+        colors <- rainbow(length(unique(my_ls$cluster)))
+        shapes <- 15:23
+        names(colors) <- unique(my_ls$cluster)
+        png(filename = paste0("pca", yrs[i], ".png"))
+        plot(pca, col = colors[my_ls$cluster], 
+             main = paste0("pca", " ", 2000 + i - 1, "-", 2000 + i),
+             "cex.main" = 1.5, "cex.lab" = 1.5)
+        text(pca, labels = my_ls$cluster,
+             col = colors[my_ls$cluster], cex = 2)
+        dev.off()
+}
+
+# combined pca plots
+pdf("combined_pca.pdf", 8,10)
+par(mfrow=c(5,4), oma = c(4,4,4,4), mai = c(0.1, 0.1, 0.2, 0.1))
+for (i in 1:20){
+        d <- dist(get(paste0("smp", yrs[i])), method = "euclidean")
+        hcward <- hclust(d, method = "ward.D2")
+        sub_grp9 <- cutree(hcward, k = 9)
+        
+        smp_mat <- as.matrix(get(paste0("smp", yrs[i])))
+        my_ls <- list(data = smp_mat, cluster = sub_grp9)
+        pca <- princomp(my_ls$data)$scores[,1:2]
+        
+        colors <- rainbow(length(unique(my_ls$cluster)))
+        shapes <- 15:23
+        names(colors) <- unique(my_ls$cluster)
+        plot(pca, col = colors[my_ls$cluster], 
+             main = paste0("pca", " ", 2000 + i - 1, "-", 2000+i), 
+             xlab = "", ylab = "", 
+             xaxt = "n", yaxt = "n", cex = 0.1,
+             "cex.main" = 1)
+        text(pca, labels = my_ls$cluster,
+             col = colors[my_ls$cluster], cex = 1)
+        # mtext("Clustering NBA player data using PCA", side = 3, line = 0, outer = TRUE, cex = 1)
+        mtext("PC2", side = 2, line = 1, outer = TRUE, cex = 0.85)
+        mtext("PC1",outer = TRUE, side = 1, line = 1, cex = 0.85)
+}
+dev.off()
+
+
+############
+# Now look at mega-clusters using tSNE
+############
+mega_clusters <- unique(new9_clst[,c(1:21, 24)])
+mega_clusters_mat <- as.matrix(mega_clusters)
+total_ls <- list(data = mega_clusters_mat, cluster = mega_clusters$sub_grp9)
+tsne_mega <- Rtsne(total_ls$data, pca = FALSE, perplexity = 30, theta = 0.0)
+
+colors <- rainbow(length(unique(total_ls$cluster)))
+shapes <- 15:23
+names(colors) <- unique(total_ls$cluster)
+plot(tsne_mega$Y, col = colors[total_ls$cluster], lty = 2,
+     main = "tSNE", 
+     xlab = "tSNE Dimension 1", 
+     ylab = "tSNE Dimension 2")
+text(tsne_mega$Y, labels=rownames(total_ls$data), col=colors[total_ls$cluster], cex = 0.75)
+
