@@ -1,0 +1,82 @@
+# Load R Packages
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(factoextra)
+library(gridExtra)
+library(cluster)
+library(data.table)
+library(plotly)
+library(XML)
+library(dplyr)
+library(gplots)
+library(NbClust)
+library(purrr)
+library(GGally)
+
+setwd("C:/Users/alexl/Documents/UTAH STATE/THESIS/Players")
+
+player.files <- list.files(path = "C:/Users/alexl/Documents/UTAH STATE/THESIS/Players")
+prefs <- substr(player.files, 1, nchar(player.files) - 4)
+
+datalist <- lapply(player.files, function(x) read.csv(x, header = TRUE))
+myList <- setNames(datalist, prefs)
+
+# convert list of dfs to one df
+mydf <- data.frame(rbindlist(myList, idcol = "file"))
+.rowNamesDF(mydf, make.names = TRUE) <- paste0(mydf$file, mydf$Tm, mydf$Season, sep = "")
+
+# Keep only where MP >= 24 (aka 2 quarters)
+datafr <- mydf[!is.na(mydf$MP), ]
+datafr <- datafr[datafr$MP >= 24, ]
+# datafr <- datafr[datafr$MP >= 48, ]
+# datafr <- datafr[datafr$MP >= 240, ]
+
+# Remove all rows with "TOT" for player
+rows_to_remove <- grep("TOT1|TOT2|TOT3|TOT4", rownames(datafr)) #length 1247
+datafr <- datafr[-c(rows_to_remove),]
+
+yrs <- c("0001", "0102", "0203", "0304", "0405", "0506", "0607", "0708", "0809", 
+         "0910", "1011", "1112", "1213", "1314", "1415", "1516", "1617", "1718", 
+         "1819", "1920")
+
+# Take only rows 11:31
+for (i in 1:20){
+  assign(paste0("smp", yrs[i]), 
+         datafr[datafr$Season == paste0("20", substr(yrs[i], 1, 2), "-", substr(yrs[i], 3, 4)),][, c(11:31)])
+}
+
+#find cols with na's : #3, 6, 9, 12
+sapply(1:21, function(x) all(!is.na(smp0708[, x])))
+
+# change NA's to -0.1
+smp0001[is.na(smp0001)] <- -0.1
+smp0102[is.na(smp0102)] <- -0.1
+smp0203[is.na(smp0203)] <- -0.1
+smp0304[is.na(smp0304)] <- -0.1
+smp0405[is.na(smp0405)] <- -0.1
+smp0506[is.na(smp0506)] <- -0.1
+smp0607[is.na(smp0607)] <- -0.1
+smp0708[is.na(smp0708)] <- -0.1
+smp0809[is.na(smp0809)] <- -0.1
+smp0910[is.na(smp0910)] <- -0.1
+smp1011[is.na(smp1011)] <- -0.1
+smp1112[is.na(smp1112)] <- -0.1
+smp1213[is.na(smp1213)] <- -0.1
+smp1314[is.na(smp1314)] <- -0.1
+smp1415[is.na(smp1415)] <- -0.1
+smp1516[is.na(smp1516)] <- -0.1
+smp1617[is.na(smp1617)] <- -0.1
+smp1718[is.na(smp1718)] <- -0.1
+smp1819[is.na(smp1819)] <- -0.1
+smp1920[is.na(smp1920)] <- -0.1
+
+# Before we do anything else, we need to scale the data
+for (i in 1:20){
+  assign(paste0("smp",yrs[i]), scale(get(paste0("smp",yrs[i]))))
+}
+
+# All of them combined
+all_players <- rbind(smp0001, smp0102, smp0203, smp0304, smp0405, smp0506, smp0607, smp0708, smp0809, 
+                     smp0910, smp1011, smp1112, smp1213, smp1314, smp1415, smp1516, smp1617, smp1718, 
+                     smp1819, smp1920)
