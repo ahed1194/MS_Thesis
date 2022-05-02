@@ -14,11 +14,14 @@ library(NbClust)
 library(purrr)
 library(GGally)
 
+# set working directory
 setwd("C:/Users/alexl/Documents/UTAH STATE/THESIS/Players")
 
+# generate list of player files from working directory
 player.files <- list.files(path = "C:/Users/alexl/Documents/UTAH STATE/THESIS/Players")
 prefs <- substr(player.files, 1, nchar(player.files) - 4)
 
+# create list of data frames
 datalist <- lapply(player.files, function(x) read.csv(x, header = TRUE))
 myList <- setNames(datalist, prefs)
 
@@ -34,8 +37,9 @@ datafr <- datafr[datafr$MP >= 24, ]
 
 # Remove all rows with "TOT" for player
 rows_to_remove <- grep("TOT1|TOT2|TOT3|TOT4", rownames(datafr)) #length 1247
-datafr <- datafr[-c(rows_to_remove),]
+datafr <- datafr[-c(rows_to_remove), ]
 
+# Initialize a years vector
 yrs <- c("0001", "0102", "0203", "0304", "0405", "0506", "0607", "0708", "0809", 
          "0910", "1011", "1112", "1213", "1314", "1415", "1516", "1617", "1718", 
          "1819", "1920")
@@ -71,12 +75,12 @@ smp1718[is.na(smp1718)] <- -0.1
 smp1819[is.na(smp1819)] <- -0.1
 smp1920[is.na(smp1920)] <- -0.1
 
-# Before we do anything else, we need to scale the data
+# Before we do anything else, we need to normalize the data
 for (i in 1:20){
-  assign(paste0("smp",yrs[i]), scale(get(paste0("smp",yrs[i]))))
+  assign(paste0("smp", yrs[i]), scale(get(paste0("smp", yrs[i]))))
 }
 
-# All of them combined
+# We can also combine all season's players into one dataframe for combined clustering
 all_players <- rbind(smp0001, smp0102, smp0203, smp0304, smp0405, smp0506, smp0607, smp0708, smp0809, 
                      smp0910, smp1011, smp1112, smp1213, smp1314, smp1415, smp1516, smp1617, smp1718, 
                      smp1819, smp1920)
