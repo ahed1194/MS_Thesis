@@ -1,4 +1,4 @@
-### MUST RUN Cluster_Manipulation CODE FIRST TO LOAD AND PROCESS DATA!!
+### MUST RUN Data_Prep CODE FIRST TO LOAD AND PROCESS DATA!!
 
 #######################################
 # SECTION 1 -- Plot Within Sum of Squares against the number of clusters
