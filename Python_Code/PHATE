@@ -1,3 +1,4 @@
+# Import packages
 import phate
 import numpy as np
 import scprep
@@ -5,49 +6,61 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
+# Set directory for reading in data tables 
+# IMPORTANT: (new9_smpXXXX_py.csv is identical to new9_smpXXXX.csv, but without rownames indicating the player reference)
 os.chdir("C:\\Users\\alexl\\Documents\\UTAH STATE\\THESIS\\py")
+
+# Read in first season as an example
 nba = pd.read_csv('new9_smp0001_py.csv')
 
-nba_data = nba.iloc[:,:21]
+# First 21 columns of data used for PHATE
+nba_data = nba.iloc[ : , :21]
+# Cluster column with row assignments
 nba_cluster = nba['sub_grp9']
 
+# View nba_data
 nba_data
 
+# Initialize PHATE operator
 phate_operator = phate.PHATE(random_state = 100)
 
+# Run PHATE on our data
 nba_phate = phate_operator.fit_transform(nba_data)
-                     
+ 
+ # Now let's read in all files and generate all 20 PHATE plots across the 20 seasons
 data_list = []
 cluster_list = []
 phate_list = []
 for i in range(len(list_of_files)):
     temp = df_list[i]
-    temp_data = temp.iloc[:,:21]
+    temp_data = temp.iloc[ : , :21]
     data_list.append(temp_data)
     temp_cluster = temp['sub_grp9']
     cluster_list.append(temp_cluster)
-    phate_operator = phate.PHATE(knn=9, random_state = 123)
+    phate_operator = phate.PHATE(knn = 9, random_state = 123)
     nba_phate = phate_operator.fit_transform(temp_data)
     phate_list.append(nba_phate)
     
-    # Create a figure (the background) and a set of axes (the things we plot on)
-fig, axes = plt.subplots(5,4, figsize=(20,18))
-# This makes it easier to iterate through the axes
+fig, axes = plt.subplots(5, 4, figsize = (20, 18))
 axes = axes.flatten()
 
 for i, ax in enumerate(axes):
     legend = True if i == 11 else False
-    scprep.plot.scatter2d(phate_list[i], c=cluster_list[i], 
-                      cmap={1 : 'red', 2 : 'orange',3 : 'greenyellow', 4 : 'lime',5 : 'lightseagreen', 
-                            6 : 'deepskyblue',7 : 'mediumblue',8 : 'purple', 9 : 'mediumvioletred'}, ax=ax,
-                      legend_anchor = (1, 0.95), legend=legend, s = 10, ticks = False, title = (str(2000+i)+'-'+str(2000+i+1)))
+    scprep.plot.scatter2d(phate_list[i], c = cluster_list[i], 
+                      cmap = {1 : 'red', 2 : 'orange', 3 : 'greenyellow', 4 : 'lime', 5 : 'lightseagreen', 
+                            6 : 'deepskyblue', 7 : 'mediumblue', 8 : 'purple', 9 : 'mediumvioletred'}, ax = ax,
+                      legend_anchor = (1, 0.95), legend = legend, s = 10, ticks = False, title = (str(2000 + i) + '-' + str(2000 + i + 1)))
 fig.tight_layout()
 plt.show()
+
+# choose where we want to save this plot matrix
 os.chdir('C:\\Users\\alexl\\Documents\\UTAH STATE\\THESIS')
 plt.savefig('phate_plots.pdf')
 
-scprep.plot.scatter2d(phate_list[0], c=cluster_list[0], 
-                      cmap={1 : 'red', 2 : 'orange',3 : 'greenyellow', 4 : 'lime',5 : 'lightseagreen', 
-                            6 : 'deepskyblue',7 : 'mediumblue',8 : 'purple', 9 : 'mediumvioletred'}, 
-                      legend_loc = 'upper right', figsize = (12,8),
+# Now we can look at any individual season
+# let's look at the 2009-2010 NBA season's phate plot up close
+scprep.plot.scatter2d(phate_list[9], c=cluster_list[9], 
+                      cmap={1 : 'red', 2 : 'orange', 3 : 'greenyellow', 4 : 'lime', 5 : 'lightseagreen', 
+                            6 : 'deepskyblue', 7 : 'mediumblue', 8 : 'purple', 9 : 'mediumvioletred'}, 
+                      legend_loc = 'upper right', figsize = (12, 8),
                      s = 50)
