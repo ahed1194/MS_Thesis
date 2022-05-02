@@ -1,67 +1,17 @@
+# Load R packages
 library(rvest)
-# library(lubridate)
 library(XML)
 library(httr)
 
-url <- "https://www.basketball-reference.com/play-index/lineup_finder.cgi?request=1&match=single&player_id=&lineup_type=5-man&output=per_min&year_id=2020&is_playoffs=N&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_month=&game_location=&game_result=&c1stat=tov&c1comp=ge&c1val=&c2stat=fg_pct&c2comp=ge&c2val=&c3stat=diff_pts&c3comp=ge&c3val=&c4stat=mp&c4comp=ge&c4val=10&order_by=mp&order_by_asc=&offset=800"
-
-webpage <- read_html(url)
-
-# Extract Column names
-col_names <- webpage %>% 
-  html_nodes("table#stats > thead > tr > th") %>% 
-  html_attr("data-stat")    
-col_names <- c(col_names[-c(1:4)])
-col_names
-
-###
-
-nba <- html_session(url) %>%
-  html_node("table#stats") %>%
-  html_table()
-class(nba)
-dim(nba)
-
-names(nba) <- col_names
-nba <- nba[-1,]
-
-# Remove extra rows
-nba <- nba[!(nba$ranker == "Rk" | nba$ranker == ""),]
-dim(nba)
-
-#Extract player names
-player_name <- GET("https://www.basketball-reference.com/play-index/lineup_finder.cgi?request=1&match=single&player_id=&lineup_type=5-man&output=per_min&year_id=2020&is_playoffs=N&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_month=&game_location=&game_result=&c1stat=tov&c1comp=ge&c1val=&c2stat=fg_pct&c2comp=ge&c2val=&c3stat=diff_pts&c3comp=ge&c3val=&c4stat=mp&c4comp=ge&c4val=10&order_by=mp&order_by_asc=&offset=800") %>%
-  htmlParse() %>%
-  xpathSApply("//table//a", xmlGetAttr, "data-tip") %>%
-  unlist()
-
-#Extract player references
-player_ref <- GET("https://www.basketball-reference.com/play-index/lineup_finder.cgi?request=1&match=single&player_id=&lineup_type=5-man&output=per_min&year_id=2020&is_playoffs=N&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_month=&game_location=&game_result=&c1stat=tov&c1comp=ge&c1val=&c2stat=fg_pct&c2comp=ge&c2val=&c3stat=diff_pts&c3comp=ge&c3val=&c4stat=mp&c4comp=ge&c4val=10&order_by=mp&order_by_asc=&offset=800") %>%
-  htmlParse() %>%
-  xpathSApply("//table//a", xmlGetAttr, "href") %>%
-  unlist()
-
-player_ref <- grep('^/players/[[:alpha:]]', player_ref, value=TRUE)
-
-# Fill in player references and player names rowrise (10 extra columns)
-new_name <- as.data.frame(split(player_name, 1:5))
-new_ref <- as.data.frame(split(player_ref, 1:5))
-
-nba_lineup <- cbind(nba, new_name, new_ref)
-# write up proposal
-# look at references to other research
-
-# data technologies hidden information/links hw2 or hw3 movie rating
-# save data as csv
-
-#### Saving Year data as CSV's
-# Use paste0 function to loop over years/pages
+# Read in URLs
+# Use offset to grab lineup tables on multiple pages
 offset <- list(seq(0, 900,  by = 100))
 
 for (i in offset){
   URLs <- paste0("https://www.basketball-reference.com/play-index/lineup_finder.cgi?request=1&match=single&player_id=&lineup_type=5-man&output=per_min&year_id=2000&is_playoffs=N&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_month=&game_location=&game_result=&c1stat=tov&c1comp=ge&c1val=&c2stat=fg_pct&c2comp=ge&c2val=&c3stat=diff_pts&c3comp=ge&c3val=&c4stat=mp&c4comp=ge&c4val=10&order_by=mp&order_by_asc=&offset=", i)
 }
 
+# For loop to read in all 10 pages of lineup tables
 nba <- list()
 for (i in 1:10){
     nb <- html_session(URLs[i]) %>%
@@ -87,14 +37,18 @@ for (i in 1:10){
     
     player_ref <- grep('^/players/[[:alpha:]]', player_ref, value=TRUE)
     
-    # Fill in player references and player names rowrise (10 extra columns)
+    # Fill in player references and player names rowrise (10 extra columns - 5 player name columns + 5 player ref columns)
     new_name <- as.data.frame(split(player_name, 1:5))
     new_ref <- as.data.frame(split(player_ref, 1:5))
     
+    # Add each page to list of data frames
     nba_lineup <- cbind(nb, new_name, new_ref)
     nba[[i]] <- nba_lineup
     
 }
 
+# combine all pages into one data frame 
 full_data2000 <- do.call(rbind, nba)
+
+# Save data frame as csv
 write.csv(full_data2000, "full_data2000.csv")
