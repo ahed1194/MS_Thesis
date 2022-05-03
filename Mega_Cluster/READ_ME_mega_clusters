@@ -1,0 +1,29 @@
+# This sub-directory contains tables related to the mega-cluster analysis. 
+
+# The 20 files beginning with 'HighLow' are CSV files for each season indicating the 'highs', 'lows', and 'in-betweens' for each cluster across the 21 variables. 
+# Highs are indicated by 1's and lows are indicated by -1's, and the in-between values are indicated by 0's. 
+
+# The megaclusters.csv file is the combined dataframe of all 20 HighLow files. 
+# These 20 HighLow csv files (one for each season) were appended one on top of the other to form a 180 row table containing 1's, 0's, and -1's for all clusters across
+# all 20 seasons. 9 clusters from each season totals to 180 clusters that were used for mega-clustering. 
+
+# The first column of the megaclusters.csv table indicates the cluster assignment, followed by a period, followed by the second year of the given season. 
+# For example: 5.2003 = the 5th cluster from the 2002-2003 NBA season. 
+# The following 21 columns indicate the highs and lows for the given variable and cluster. 
+# The year column indicates the second year of the given season. Ex: 2002 = 2001-2002 NBA season
+# The clst column indicates the cluster for the SEASON
+# The sub_grp9 column indicates the mega-cluster assignment for ALL 20 SEASONS
+
+# The files named Player_Apps_{1-9}.csv are tables (one for each mega-cluster) that give the player reference and the number of appearances in the given mega-cluster
+# over the course of their career. The tables are sorted by the highest number of appearances in descending order. 
+
+# The files named Player_App_Pct_{1-9}.csv are tables (one for each mega-cluster) that give the player reference, the total number of appearances in any
+# mega-cluster (n.x) , the total number of appearances in the given mega-cluster (n.y), and the percentage of their total cluster assignments that were in the given
+# mega-cluster. 
+# EX from Player_App_Pct_7.csv : 
+# X = geeal01 (Alonzo Gee) 
+# n.x = 10 (10 total appearances in any mega-cluster throughout the 20 seasons)
+# n.y = 8 (Alonzo Gee appeared 8 times in mega-cluster 7)
+# pct = 0.80 (Alonzo Gee spent 80% of his career in mega-cluster 7
+# The tables are sorted by the highest percentage of career in the given mega-cluster in descending order. 
+
