@@ -1,0 +1,5 @@
+# This file contains the Python code used to generate the PHATE plots for the individual NBA seasons. 
+
+# The user must note that the initial season tables read in for these plots consist of the player rows for a given season and their 21 scaled statistics for that season.
+# Row names indicating the player, team, and year have been excluded from these tables. The user may read in the new9_smpXXXX.csv files and simply exclude the first 
+# column to achieve the same outcome as the one presented in this code. 
