@@ -1,1 +1,9 @@
+# This file contains sub-directories for all player tables who participated in at least one season from 2000-2001 to 2019-2020. 
+# Ex: John Stockton played the majority of his career in the 80's and 90's, but since he played in the 2000-2001 NBA season, his entire table dating
+# back to the 84-85 season is included. 
 
+# Player tables are categorized according to the first letter of their last name. Player files are listed as the first five letters of their last name, 
+# followed by the first two letters of their first name. 
+
+# Games Played (G), Games Started (GS), and Minutes Played (MP) are displayed as totals for a given season, while all variables from Field Goals Made (FG)
+# to Points (PTS) are listed as per 36 minutes average.
