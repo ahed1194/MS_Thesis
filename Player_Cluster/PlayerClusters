@@ -1,1 +1,7 @@
+# This sub-directory contains all 20 seasons' player data with their normalized season statistics. All player statistics were normalized using the scale() R function. 
 
+# The first column is a concatenated identifier that contains the player reference, the three-letter team abbreviation, and the season. 
+
+# The second-to-last column indicates the player's cluster assignment from 1 to 9 for that season. 
+
+# The final column indicates the second year of the given season. This column was used for identification purposes in later analyses. 
