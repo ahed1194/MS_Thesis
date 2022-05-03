@@ -1,4 +1,4 @@
-# This sub-folder contains all R code used to obtain, load, process, and analyze the NBA player and lineup data.
+### This sub-folder contains all R code used to obtain, load, process, and analyze the NBA player and lineup data.
 # NOTE: Some dependencies may exist...you may need to run the Data_Prep_Player file or the Cluster_Validation file before running some of the other scripts. 
 
 # The Player_Scraping file contains all code needed to scrape all NBA player data used for this analysis. 
