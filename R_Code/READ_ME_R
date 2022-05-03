@@ -4,16 +4,22 @@
 # The Player_Scraping file contains all code needed to scrape all NBA player data used for this analysis. 
 
 # The Lineup_Scraping file contains all code that was used to scrape the NBA lineup data. Note that the base URL used to bring in these tables is no longer valid.
-# The lineup data has moved to a subscription-only section of the Basketball-Reference website called Stathead. Assuming the structure of these tables remains the same, users with a subscription may still find this code useful with little modification. 
+# The lineup data has moved to a subscription-only section of the Basketball-Reference website called Stathead. Assuming the structure of these tables remains the 
+# same, users with a subscription may still find this code useful with little modification. 
 
 # The Data_Prep_Player file contains all code used to load the player CSV files and perform any necessary processing and manipulating prior to clustering. 
 # THIS FILE must be run prior to running any of the algorithms or visualizations.
 
-# The Cluster_Validation file contains all code related to data and cluster validation. This file includes code for generating Within Sum of Squares plots, the AGNES coefficient for determining the best hierarchical clustering method, the NbClust procedure and the histograms displaying the consensus selection across the 26 indices, and the Adjusted Rand Inde (ARI) calculations by season along with the random baseline simulations. 
+# The Cluster_Validation file contains all code related to data and cluster validation. This file includes code for generating Within Sum of Squares plots, the 
+# AGNES coefficient for determining the best hierarchical clustering method, the NbClust procedure and the histograms displaying the consensus selection across the 
+# 26 indices, and the Adjusted Rand Inde (ARI) calculations by season along with the random baseline simulations. 
 # NOTE: The Data_Prep_Player file must be run prior to executing this code. 
 
-# The Cluster_Algs_EDA file contains all code used to cluster the individual seasons of player data as well as the mega-clustering method and clustering assignments. The remaining code is provided to show how these mega-clusters were analyzed to see which players appeared in them the most frequently and at the highest percentage. 
+# The Cluster_Algs_EDA file contains all code used to cluster the individual seasons of player data as well as the mega-clustering method and clustering assignments. 
+# The remaining code is provided to show how these mega-clusters were analyzed to see which players appeared in them the most frequently and at the highest percentage. 
 # NOTE: The Data_Prep Player file must be run prior to running this code.
 
-# The Clustering_Visualization file contains all code used to visualize the individual season clusterings as well as the mega-clustering assignments. Visualizations include dendograms, PCA (factoextra and base R), and tSNE. 
-# NOTE: The Data_Prep Player file must be run prior to running this code. The user must also run lines 28--98 of the Cluster_Algs_EDA for any of the mega-clustering visualizations. 
+# The Clustering_Visualization file contains all code used to visualize the individual season clusterings as well as the mega-clustering assignments. Visualizations 
+# include dendograms, PCA (factoextra and base R), and tSNE. 
+# NOTE: The Data_Prep Player file must be run prior to running this code. The user must also run lines 28--98 of the Cluster_Algs_EDA for any of the mega-clustering 
+# visualizations. 
