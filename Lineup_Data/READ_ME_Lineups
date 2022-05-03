@@ -1,3 +1,11 @@
 # This folder contains lineup statistics from the 2000-2001 NBA season to the 2019-2020 NBA season. 
 
 # These CSV files were scraped in R using the code found in the Lineup_Scraping folder of this repository. 
+
+# Lineup table observations consist of five unique players, the team, and the season. Other identifiers were added to the end of the tables, 
+# including each player's name and unique reference linked to the Basketball Reference website. These identifiers could be useful for matching individual 
+# players with their lineup combinations and performances.
+
+# Games (g) and Minutes Played (mp) variables are listed as totals for the entire season. Possessions (poss) and Opponent Possessions (opp_poss) 
+# are listed as totals as well. The rest of the data from Pace all the way to Point Differential (diff_pts) are listed as averages per 48 minutes 
+# playing time to control for lineups that played very little time together. 
