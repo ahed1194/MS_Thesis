@@ -1,4 +1,4 @@
-# MUST RUN Data_Prep AND Clustering_Algs (lines 1-100) SCRIPTS BEFORE RUNNING THIS CODE!
+# MUST RUN Data_Prep AND Clustering_Algs (lines 28--98) SCRIPTS BEFORE RUNNING THIS CODE!
 
 ########################################################
 # Dendograms
