@@ -6,7 +6,7 @@ library(gridExtra) # multiple plots in same figure
 library(cluster) # agnes coefficient
 library(data.table) # table joins and aggregations
 library(plotly) # interactive visualizations
-library(XML) # importing basketball-reference data
+library(XML) # reading basketball-reference HTML data
 library(NbClust) # indices for optimal cluster selection 
 
 # set working directory
