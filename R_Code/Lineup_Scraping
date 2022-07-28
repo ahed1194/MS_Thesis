@@ -1,7 +1,7 @@
 # Load R packages
-library(rvest)
-library(XML)
-library(httr)
+library(rvest) # importing data from basketball-reference
+library(XML) # reading HTML data from basketball-reference import
+library(httr) # GET() function for URLs
 
 # Read in URLs
 # Use offset to grab lineup tables on multiple pages
