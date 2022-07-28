@@ -3,9 +3,9 @@
 # The 20 files beginning with 'HighLow' are CSV files for each season indicating the 'highs', 'lows', and 'in-betweens' for each cluster across the 21 variables. 
 # Highs are indicated by 1's and lows are indicated by -1's, and the in-between values are indicated by 0's. 
 
-# The megaclusters.csv file is the combined dataframe of all 20 HighLow files. 
-# These 20 HighLow csv files (one for each season) were appended one on top of the other to form a 180 row table containing 1's, 0's, and -1's for all clusters across
-# all 20 seasons. 9 clusters from each season totals to 180 clusters that were used for mega-clustering. 
+# The megaclusters.csv file is the combined dataframe of all 20 seasons indicating the 'highs', 'lows', and 'in-betweens' for each cluster across the 21 variables.
+# Highs are indicated by 1's and lows are indicated by -1's, and the in-between values are indicated by 0's. 
+# 9 clusters from each season totals to 180 clusters that were used for mega-clustering. 
 
 # The first column of the megaclusters.csv table indicates the cluster assignment, followed by a period, followed by the second year of the given season. 
 # For example: 5.2003 = the 5th cluster from the 2002-2003 NBA season. 
