@@ -1,18 +1,13 @@
 # Load R Packages
-library(tidyverse)
-library(ggplot2)
-library(ggpubr)
-library(factoextra)
-library(gridExtra)
-library(cluster)
-library(data.table)
-library(plotly)
-library(XML)
-library(dplyr)
-library(gplots)
-library(NbClust)
-library(purrr)
-library(GGally)
+library(tidyverse) # data manipulation and ggplot2
+library(ggpubr) # additional ggplot features
+library(factoextra) # PCA plots
+library(gridExtra) # multiple plots in same figure
+library(cluster) # agnes coefficient
+library(data.table) # table joins and aggregations
+library(plotly) # interactive visualizations
+library(XML) # importing basketball-reference data
+library(NbClust) # indices for optimal cluster selection 
 
 # set working directory
 setwd("C:/Users/alexl/Documents/UTAH STATE/THESIS/Players")
