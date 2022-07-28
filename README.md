@@ -23,9 +23,8 @@ The second-to-last column indicates the player's cluster assignment from 1 to 9 
 The final column indicates the second year of the given season. This column was used for identification purposes in later analyses. 
 
 # 4 -- Mega_Cluster
-This sub-directory contains tables related to the mega-cluster analysis. The 20 files beginning with 'HighLow' are CSV files for each season indicating the 'highs', 'lows', and 'in-betweens' for each cluster across the 21 variables. 
-
-The megaclusters.csv file is the combined dataframe of all 20 HighLow files. 
+This sub-directory contains tables related to the mega-cluster analysis. 
+The megaclusters.csv file displays the 'highs', 'lows', and 'in-betweens' for each season and cluster across the 21 variables.  
 
 The files named Player_Apps_{1-9}.csv are tables (one for each mega-cluster) that give the player reference and the number of appearances in the given mega-cluster
 over the course of their career. The tables are sorted by the highest number of appearances in descending order. 
