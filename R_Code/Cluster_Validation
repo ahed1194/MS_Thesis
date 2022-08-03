@@ -64,7 +64,6 @@ c(mean(Av), mean(Si), mean(Co), mean(Wa), mean(We))
 ################################
 # Hierarchical ward.D2 - 5-20
 ################################
-setwd("C:/Users/alexl/Documents/UTAH STATE/THESIS")
 set.seed(1234)
 nc1wd2 <- NbClust(smp0001, min.nc = 5, max.nc = 20, method = "ward.D2")
 nc2wd2 <- NbClust(smp0102, min.nc = 5, max.nc = 20, method = "ward.D2")
@@ -110,7 +109,6 @@ save(nc19wd2, file = "res19.Rdata")
 save(nc20wd2, file = "res20.Rdata")
 
 # reload results
-setwd("C:/Users/alexl/Documents/UTAH STATE/THESIS")
 for (i in 1:20){
   load(paste0("res", i, ".Rdata"))
 }
@@ -142,7 +140,7 @@ write.csv(my_indices, file = "my_indices.csv")
 my_indices[my_indices < 5] <- NA
 
 # Create histogram matrix showing 20 seasons and their optimal cluster selections
-# pdf("C:/Users/alexl/Documents/UTAH STATE/THESIS/my_indices.pdf")
+# pdf("my_indices.pdf")
 par(mfrow = c(5, 4), oma = c(4, 6, 4, 6),
     mar = c(1.5, 1.5, 1.5, 1.5))
 for (i in 1:20){
@@ -340,7 +338,7 @@ for (i in 1:20){
          
 df1 <- data.frame()
 df2 <- data.frame()
-pdf("C:/Users/alexl/Documents/UTAH STATE/THESIS/ari_sim.pdf")
+pdf("ari_sim.pdf")
 par(mfrow = c(5, 4), oma = c(4, 6, 4, 6),
     mar = c(1.5, 1.5, 1.5, 1.5))
 for (i in 1:19){
